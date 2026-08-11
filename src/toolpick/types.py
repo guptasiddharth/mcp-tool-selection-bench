@@ -63,12 +63,20 @@ class Task:
     # arg-name -> constraint. Presence is always required; {"equals": v} also
     # checks the value. Extra constraints are ignored so data stays forward-safe.
     expected_args: dict[str, dict[str, Any]] = field(default_factory=dict)
+    # Other first moves that are also correct for this task, typically a read or
+    # inspect before acting (e.g. get_ticket before reply_to_ticket). Choosing one
+    # counts as a right tool but is not held to the expected_args of the main tool.
+    acceptable_tools: tuple[str, ...] = ()
     # tools that are tempting but violate policy for this task (e.g. issuing a
     # refund before checking eligibility). Choosing one is a policy violation.
     forbidden_tools: tuple[str, ...] = ()
     difficulty: str = "medium"
     tags: tuple[str, ...] = ()
     rationale: str = ""
+
+    def accepted(self) -> set[str]:
+        """The expected tool plus any explicitly acceptable alternatives."""
+        return {self.expected_tool, *self.acceptable_tools}
 
     @staticmethod
     def from_dict(d: dict[str, Any]) -> Task:
@@ -78,6 +86,7 @@ class Task:
             prompt=d["prompt"],
             expected_tool=d["expected_tool"],
             expected_args={k: dict(v) for k, v in d.get("expected_args", {}).items()},
+            acceptable_tools=tuple(d.get("acceptable_tools", [])),
             forbidden_tools=tuple(d.get("forbidden_tools", [])),
             difficulty=d.get("difficulty", "medium"),
             tags=tuple(d.get("tags", [])),

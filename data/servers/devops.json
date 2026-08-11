@@ -1,0 +1,41 @@
+{
+  "name": "devops",
+  "description": "A deployment control plane. Diagnose before you disrupt: restarts and rollbacks are impactful and should follow investigation.",
+  "tools": [
+    {
+      "name": "list_deployments",
+      "description": "List recent deployments, optionally for one service. Read-only.",
+      "parameters": {"type": "object", "properties": {"service": {"type": "string"}}, "required": []}
+    },
+    {
+      "name": "get_deployment",
+      "description": "Fetch a single deployment by its exact id. Read-only.",
+      "parameters": {"type": "object", "properties": {"deployment_id": {"type": "string"}}, "required": ["deployment_id"]}
+    },
+    {
+      "name": "get_logs",
+      "description": "Fetch recent logs for a service. Read-only. Use this to diagnose an error or outage before taking any disruptive action.",
+      "parameters": {"type": "object", "properties": {"service": {"type": "string"}, "since": {"type": "string"}}, "required": ["service"]}
+    },
+    {
+      "name": "get_metrics",
+      "description": "Fetch metrics (latency, error rate, saturation) for a service. Read-only.",
+      "parameters": {"type": "object", "properties": {"service": {"type": "string"}}, "required": ["service"]}
+    },
+    {
+      "name": "rollback_deployment",
+      "description": "Roll a service back to its previous deployment. Impactful. Only call when a specific bad deployment is identified and rollback is the decided action.",
+      "parameters": {"type": "object", "properties": {"deployment_id": {"type": "string"}}, "required": ["deployment_id"]}
+    },
+    {
+      "name": "restart_service",
+      "description": "Restart a service. Disruptive; causes downtime. Do not use as a first response to an unexplained error; diagnose first.",
+      "parameters": {"type": "object", "properties": {"service": {"type": "string"}}, "required": ["service"]}
+    },
+    {
+      "name": "scale_service",
+      "description": "Set the replica count for a service.",
+      "parameters": {"type": "object", "properties": {"service": {"type": "string"}, "replicas": {"type": "integer"}}, "required": ["service", "replicas"]}
+    }
+  ]
+}

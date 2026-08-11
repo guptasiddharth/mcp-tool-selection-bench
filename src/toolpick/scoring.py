@@ -46,10 +46,14 @@ def score(task: Task, call: ToolCall | None) -> Scores:
         return Scores(0.0, 0.0, 1.0, 0.0)  # declining is in-policy but never correct
 
     policy = 0.0 if call.tool in task.forbidden_tools else 1.0
-    tool_ok = 1.0 if call.tool == task.expected_tool else 0.0
+    tool_ok = 1.0 if call.tool in task.accepted() else 0.0
 
-    if tool_ok:
+    if call.tool == task.expected_tool:
         param_frac, all_required = _parameter_accuracy(task, call)
+    elif tool_ok:
+        # An acceptable alternative (a read/inspect first). Its arguments are not
+        # held to the main tool's expected_args.
+        param_frac, all_required = 1.0, True
     else:
         param_frac, all_required = 0.0, False
 

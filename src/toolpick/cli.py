@@ -32,7 +32,8 @@ def _cmd_run(args: argparse.Namespace) -> int:
     suite = load_suite(args.data)
     provider = get_provider(args.provider, model=args.model, seed=args.seed)
     result = run_suite(
-        provider, suite, seed=args.seed, limit=args.limit, cross_domain=args.cross_domain
+        provider, suite, seed=args.seed, limit=args.limit,
+        cross_domain=args.cross_domain, concurrency=args.concurrency,
     )
     out = args.out or f"results/{provider.name}-{provider.model.replace('/', '_')}-seed{args.seed}.json"
     Path(out).parent.mkdir(parents=True, exist_ok=True)
@@ -96,6 +97,7 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--seed", type=int, default=0)
     pr.add_argument("--limit", type=int, default=None, help="Run only N seeded tasks.")
     pr.add_argument("--cross-domain", action="store_true", help="Expose all servers' tools.")
+    pr.add_argument("--concurrency", type=int, default=1, help="Parallel workers for API calls.")
     pr.add_argument("--out", default=None, help="Output JSON path.")
     pr.set_defaults(func=_cmd_run)
 

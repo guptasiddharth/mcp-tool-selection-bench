@@ -20,13 +20,18 @@ from .base import DEFAULT_SYSTEM
 class LiteLLMProvider:
     name = "litellm"
 
-    def __init__(self, model: str, temperature: float = 0.0, **kwargs) -> None:
+    def __init__(self, model: str, temperature: float | None = None, **kwargs) -> None:
         try:
-            import litellm  # noqa: F401
+            import litellm
         except ImportError as e:  # pragma: no cover - exercised only without the extra
             raise ImportError(
                 "The litellm provider needs the extra: pip install 'toolpick[litellm]'"
             ) from e
+        # Some models (e.g. the Claude 5 family) only accept their default
+        # temperature. Drop params they reject rather than erroring the run, and
+        # by default do not pin temperature at all, so the whole slate is compared
+        # at each model's own default (a fair setting).
+        litellm.drop_params = True
         self.model = model
         self.temperature = temperature
         self._kwargs = kwargs
@@ -34,16 +39,18 @@ class LiteLLMProvider:
     def select_tool(self, system: str, request: str, tools: list[Tool]) -> ToolCall | None:
         import litellm
 
+        params = dict(self._kwargs)
+        if self.temperature is not None:
+            params["temperature"] = self.temperature
         resp = litellm.completion(
             model=self.model,
-            temperature=self.temperature,
             messages=[
                 {"role": "system", "content": system or DEFAULT_SYSTEM},
                 {"role": "user", "content": request},
             ],
             tools=[t.to_openai() for t in tools],
             tool_choice="required",
-            **self._kwargs,
+            **params,
         )
         message = resp.choices[0].message
         calls = getattr(message, "tool_calls", None)

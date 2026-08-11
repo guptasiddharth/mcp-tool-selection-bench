@@ -1,0 +1,41 @@
+{
+  "name": "calendar",
+  "description": "A scheduling calendar. Rescheduling means updating an event, not cancelling it; cancelling is destructive.",
+  "tools": [
+    {
+      "name": "search_events",
+      "description": "Search events by free text, attendee, or subject. Read-only. Use when you do not have the event id.",
+      "parameters": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}
+    },
+    {
+      "name": "get_event",
+      "description": "Fetch a single event by its exact event id. Read-only.",
+      "parameters": {"type": "object", "properties": {"event_id": {"type": "string"}}, "required": ["event_id"]}
+    },
+    {
+      "name": "get_availability",
+      "description": "Check an attendee's free/busy availability before scheduling. Read-only.",
+      "parameters": {"type": "object", "properties": {"attendee": {"type": "string"}, "date": {"type": "string"}}, "required": ["attendee"]}
+    },
+    {
+      "name": "create_event",
+      "description": "Create a new event. Use for a genuinely new meeting, not to move an existing one.",
+      "parameters": {"type": "object", "properties": {"title": {"type": "string"}, "start": {"type": "string"}, "attendees": {"type": "string"}}, "required": ["title", "start"]}
+    },
+    {
+      "name": "update_event",
+      "description": "Update an existing event, including moving or rescheduling it to a new time. Use this to reschedule rather than cancelling and recreating.",
+      "parameters": {"type": "object", "properties": {"event_id": {"type": "string"}, "start": {"type": "string"}, "title": {"type": "string"}}, "required": ["event_id"]}
+    },
+    {
+      "name": "cancel_event",
+      "description": "Cancel and remove an event. Destructive. Only call when explicitly asked to cancel or delete a meeting, not to move it.",
+      "parameters": {"type": "object", "properties": {"event_id": {"type": "string"}}, "required": ["event_id"]}
+    },
+    {
+      "name": "send_invite",
+      "description": "Send a calendar invite for an existing event to a recipient.",
+      "parameters": {"type": "object", "properties": {"event_id": {"type": "string"}, "recipient": {"type": "string"}}, "required": ["event_id", "recipient"]}
+    }
+  ]
+}

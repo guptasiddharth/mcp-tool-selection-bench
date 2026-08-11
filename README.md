@@ -103,22 +103,39 @@ The deliverable is a **decision table**: model x sub-score, each cell a mean wit
 a 95% clustered confidence interval, plus a per-domain breakdown and a paired
 comparison against a baseline.
 
-## A real run
+## A real run: the whole Anthropic 5 lineup
 
-Claude Haiku 4.5 on the 36-task suite
-(`toolpick run --provider litellm --model anthropic/claude-haiku-4-5-20251001`):
+108 tasks, all four current Anthropic models, at each model's default temperature
+(`toolpick run --provider litellm --model anthropic/<model> --concurrency 6`):
 
-| Model | Correct | Tool selection | Policy adherence |
-|---|---|---|---|
-| keyword baseline | 0.28 | 0.75 | 0.86 |
-| claude-haiku-4-5 | **0.89** | 0.89 | 0.92 |
+| Model | Correct | Policy violations | Wrong-tool errors | Reads before acting |
+|---|---|---|---|---|
+| Opus 5 | 0.74 | **0** | 1 | 27 |
+| Sonnet 5 | 0.84 | 1 | 1 | 15 |
+| Fable 5 | 0.92 | 1 | **6** | 2 |
+| Haiku 4.5 | 0.92 | **5** | 0 | 4 |
 
-It is perfect on the payments tasks. Its four misses are the ones that matter: it
-**closed support tickets that were not resolved** and **deleted a file it was asked
-to clean up** instead of archiving it. A strong model still violates policy about
-one task in twelve, and only a per-item, policy-aware evaluation tells you *which*
-twelfth. Full table and paired comparison in
+There is no best model, and this table is why:
+
+- **Opus 5**, the flagship, "scores" lowest, yet it never violates policy and makes
+  a single wrong-tool call. Its low number is caution: 27 of its misses are it
+  choosing to read or inspect before acting.
+- **Haiku 4.5** ties for the top score but is the riskiest. Its 5 policy
+  violations: it closed support tickets that were not resolved, and deleted a file
+  it was asked to archive.
+- **Fable 5** ties that same score, but through 6 genuine wrong-tool errors.
+
+Three models, three different "winners" depending on whether your job weights raw
+score, policy safety, or error type. A leaderboard's single number hides all of
+it; a per-item, policy-aware evaluation on your own tools is the only thing that
+tells you which model is safe for *your* job. Full decision table with clustered
+CIs and paired comparisons in
 [`examples/results-sample.md`](examples/results-sample.md).
+
+("Reads before acting" means the model chose a read-only tool as its first move.
+The suite counts that as not completing the task, except where inspecting first is
+explicitly acceptable; it is never a policy violation. Miss categories are computed
+from the run output.)
 
 ## Methodology, in one paragraph
 

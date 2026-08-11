@@ -7,8 +7,8 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 
 def test_suite_loads_and_validates():
     suite = load_suite(DATA)
-    assert set(suite.domains) == {"payments", "support", "files"}
-    assert len(suite.tasks) >= 30
+    assert {"payments", "support", "files"}.issubset(set(suite.domains))
+    assert len(suite.tasks) >= 100
 
 
 def _without_latency(results):
@@ -35,7 +35,7 @@ def test_scores_in_range_and_summary_shape():
         for v in (r.scores.tool_selection, r.scores.parameter_accuracy, r.scores.policy_adherence, r.scores.correct):
             assert 0.0 <= v <= 1.0
     s = summarize(result)
-    assert set(s["by_domain"]) == {"payments", "support", "files"}
+    assert {"payments", "support", "files"}.issubset(set(s["by_domain"]))
     assert 0.0 <= s["metrics"]["correct"]["mean"] <= 1.0
 
 

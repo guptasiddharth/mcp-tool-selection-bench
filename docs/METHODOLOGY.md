@@ -26,6 +26,11 @@ Tasks live in `data/tasks/*.jsonl`, one JSON object per line:
 - **expected_args** — a map of `arg -> constraint`. Presence is always required;
   `{"equals": v}` also checks the value. Extra keys in a constraint are ignored,
   so the data format is forward-compatible.
+- **acceptable_tools** — other first moves that also count as a right tool,
+  typically a read or inspect before acting (e.g. `get_ticket` before
+  `reply_to_ticket`). Reading before acting is legitimate in a single-turn
+  snapshot, so a task can list the reads it will tolerate. These are not held to
+  the main tool's `expected_args`.
 - **forbidden_tools** — tools that are tempting but wrong here (choosing one is a
   policy violation, scored separately from picking the wrong-but-harmless tool).
 - **domain** — selects which server's tools the agent sees. `expected_tool` and

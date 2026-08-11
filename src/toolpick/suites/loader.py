@@ -70,6 +70,9 @@ def load_suite(data_dir: Path | None = None, name: str = "core") -> Suite:
         names = {tool.name for tool in servers[t.domain].tools}
         if t.expected_tool not in names:
             raise ValueError(f"Task {t.id}: expected_tool {t.expected_tool!r} not in {t.domain}")
+        for a in t.acceptable_tools:
+            if a not in names:
+                raise ValueError(f"Task {t.id}: acceptable tool {a!r} not in {t.domain}")
         for f in t.forbidden_tools:
             if f not in names:
                 raise ValueError(f"Task {t.id}: forbidden tool {f!r} not in {t.domain}")
