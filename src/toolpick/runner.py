@@ -73,8 +73,8 @@ def run(
                 pool.submit(_run_one, provider, suite, t, cross_domain, system): i
                 for i, t in enumerate(selected)
             }
-            for fut in futures:
-                results_by_index[futures[fut]] = fut.result()
+            for fut, idx in futures.items():
+                results_by_index[idx] = fut.result()
         results = [results_by_index[i] for i in range(len(selected))]
 
     return RunResult(
