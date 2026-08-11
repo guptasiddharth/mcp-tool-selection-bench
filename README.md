@@ -103,6 +103,23 @@ The deliverable is a **decision table**: model x sub-score, each cell a mean wit
 a 95% clustered confidence interval, plus a per-domain breakdown and a paired
 comparison against a baseline.
 
+## A real run
+
+Claude Haiku 4.5 on the 36-task suite
+(`toolpick run --provider litellm --model anthropic/claude-haiku-4-5-20251001`):
+
+| Model | Correct | Tool selection | Policy adherence |
+|---|---|---|---|
+| keyword baseline | 0.28 | 0.75 | 0.86 |
+| claude-haiku-4-5 | **0.89** | 0.89 | 0.92 |
+
+It is perfect on the payments tasks. Its four misses are the ones that matter: it
+**closed support tickets that were not resolved** and **deleted a file it was asked
+to clean up** instead of archiving it. A strong model still violates policy about
+one task in twelve, and only a per-item, policy-aware evaluation tells you *which*
+twelfth. Full table and paired comparison in
+[`examples/results-sample.md`](examples/results-sample.md).
+
 ## Methodology, in one paragraph
 
 Tasks are graded with **golden answers**, so there is no LLM judge and no judge
