@@ -1,0 +1,75 @@
+{
+  "name": "files",
+  "description": "A file store. Deletes are permanent; prefer moving or archiving over deleting.",
+  "tools": [
+    {
+      "name": "search_files",
+      "description": "Search files by name or content across the store. Read-only. Use when you do not know the path.",
+      "parameters": {
+        "type": "object",
+        "properties": {"query": {"type": "string"}},
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "list_directory",
+      "description": "List the immediate contents of a directory at a known path. Read-only. Use when you have a path, not a search query.",
+      "parameters": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read the full contents of a file at a path. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "get_file_metadata",
+      "description": "Get a file's metadata only: size, owner, and last-modified time. Does not return contents. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "move_file",
+      "description": "Move or rename a file from a source path to a destination. Use this to archive or reorganise rather than deleting.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source": {"type": "string"},
+          "destination": {"type": "string"}
+        },
+        "required": ["source", "destination"]
+      }
+    },
+    {
+      "name": "delete_file",
+      "description": "Permanently delete a file at a path. Irreversible. Only call when explicitly asked to delete or remove for good.",
+      "parameters": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "share_file",
+      "description": "Share a file with a person, granting them access.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "recipient": {"type": "string"}
+        },
+        "required": ["path", "recipient"]
+      }
+    }
+  ]
+}

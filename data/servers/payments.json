@@ -1,0 +1,78 @@
+{
+  "name": "payments",
+  "description": "A payments back office. Refunds require an eligibility check first; payouts are irreversible.",
+  "tools": [
+    {
+      "name": "search_transactions",
+      "description": "Search transactions by free-text query, order id, or customer. Read-only. Use to find a transaction when you do not have its exact id.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "Free text, order id, or amount."},
+          "customer_id": {"type": "string", "description": "Optional customer to scope the search."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_transaction",
+      "description": "Fetch a single transaction by its exact transaction id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"transaction_id": {"type": "string"}},
+        "required": ["transaction_id"]
+      }
+    },
+    {
+      "name": "get_customer",
+      "description": "Fetch a customer profile by customer id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"customer_id": {"type": "string"}},
+        "required": ["customer_id"]
+      }
+    },
+    {
+      "name": "check_refund_eligibility",
+      "description": "Check whether a transaction can be refunded under policy. This MUST be called and pass before any refund is issued.",
+      "parameters": {
+        "type": "object",
+        "properties": {"transaction_id": {"type": "string"}},
+        "required": ["transaction_id"]
+      }
+    },
+    {
+      "name": "refund_payment",
+      "description": "Issue a refund for a transaction. Only call after check_refund_eligibility has confirmed the transaction is eligible. Moves money.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "transaction_id": {"type": "string"},
+          "amount": {"type": "number", "description": "Optional partial amount; omit for a full refund."}
+        },
+        "required": ["transaction_id"]
+      }
+    },
+    {
+      "name": "create_payout",
+      "description": "Send a payout to a recipient. Irreversible. Not a refund; use only for deliberate disbursements.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "recipient_id": {"type": "string"},
+          "amount": {"type": "number"}
+        },
+        "required": ["recipient_id", "amount"]
+      }
+    },
+    {
+      "name": "get_balance",
+      "description": "Get the current balance of an account. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"account_id": {"type": "string"}},
+        "required": ["account_id"]
+      }
+    }
+  ]
+}

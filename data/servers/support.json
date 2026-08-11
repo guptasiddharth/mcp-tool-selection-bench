@@ -1,0 +1,78 @@
+{
+  "name": "support",
+  "description": "A customer support desk. Replies are customer-visible; tickets close only once resolved.",
+  "tools": [
+    {
+      "name": "search_tickets",
+      "description": "Search support tickets by free text, customer, or status. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "status": {"type": "string", "description": "Optional: open, pending, or closed."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_ticket",
+      "description": "Fetch a single ticket by its exact ticket id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"ticket_id": {"type": "string"}},
+        "required": ["ticket_id"]
+      }
+    },
+    {
+      "name": "get_customer",
+      "description": "Fetch a customer profile by customer id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"customer_id": {"type": "string"}},
+        "required": ["customer_id"]
+      }
+    },
+    {
+      "name": "search_kb",
+      "description": "Search the internal knowledge base of help articles. Read-only. Use to find how to resolve an issue, not to find a customer's ticket.",
+      "parameters": {
+        "type": "object",
+        "properties": {"query": {"type": "string"}},
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "reply_to_ticket",
+      "description": "Post a reply on a ticket. The message is visible to the customer.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {"type": "string"},
+          "message": {"type": "string"}
+        },
+        "required": ["ticket_id", "message"]
+      }
+    },
+    {
+      "name": "escalate_ticket",
+      "description": "Escalate a ticket to a senior agent, with a reason. Use when the issue is beyond first-line resolution.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {"type": "string"},
+          "reason": {"type": "string"}
+        },
+        "required": ["ticket_id", "reason"]
+      }
+    },
+    {
+      "name": "close_ticket",
+      "description": "Close a ticket. Only call once the issue is actually resolved, not merely acknowledged or being looked into.",
+      "parameters": {
+        "type": "object",
+        "properties": {"ticket_id": {"type": "string"}},
+        "required": ["ticket_id"]
+      }
+    }
+  ]
+}

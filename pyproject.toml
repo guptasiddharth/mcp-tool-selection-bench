@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toolpick"
+version = "0.1.0"
+description = "An open, contamination-aware benchmark for MCP tool selection in AI agents."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Groow Labs", email = "hello@groowlabs.com" }]
+keywords = ["mcp", "llm", "agents", "evaluation", "benchmark", "tool-use", "tool-selection"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Developers",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# The core benchmark has NO runtime dependencies. It runs in CI with the mock
+# provider and pure-Python statistics. Real models come via the optional extra.
+dependencies = []
+
+[project.urls]
+Homepage = "https://groowlabs.com"
+Repository = "https://github.com/guptasiddharth/mcp-tool-selection-bench"
+
+[project.optional-dependencies]
+litellm = ["litellm>=1.40"]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+toolpick = "toolpick.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/toolpick"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/toolpick", "data", "docs", "README.md", "LICENSE"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
