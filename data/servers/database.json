@@ -1,0 +1,130 @@
+{
+  "name": "database",
+  "description": "A database operations console. Destructive and schema-changing actions are irreversible; a fresh backup is required before dropping, deleting, or migrating.",
+  "tools": [
+    {
+      "name": "list_tables",
+      "description": "List the tables in a database, optionally filtered by schema. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"schema": {"type": "string"}},
+        "required": []
+      }
+    },
+    {
+      "name": "describe_table",
+      "description": "Get a table's schema only: column names, types, and indexes. Does not return row data. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"table": {"type": "string"}},
+        "required": ["table"]
+      }
+    },
+    {
+      "name": "get_row",
+      "description": "Fetch a single row from a table by its exact primary key. Read-only. Use when you already know the specific row id.",
+      "parameters": {
+        "type": "object",
+        "properties": {"table": {"type": "string"}, "id": {"type": "string"}},
+        "required": ["table", "id"]
+      }
+    },
+    {
+      "name": "query_table",
+      "description": "Run a read-only filtered query over a table's rows, returning a result set. Use when you need multiple rows, a count, or rows matching a condition rather than one known id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {"type": "string"},
+          "filter": {"type": "string", "description": "Optional filter expression."}
+        },
+        "required": ["table"]
+      }
+    },
+    {
+      "name": "insert_row",
+      "description": "Insert a new row into a table.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {"type": "string"},
+          "values": {"type": "object", "description": "Column-value pairs for the new row."}
+        },
+        "required": ["table", "values"]
+      }
+    },
+    {
+      "name": "update_row",
+      "description": "Update columns on a single existing row identified by its primary key.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {"type": "string"},
+          "id": {"type": "string"},
+          "values": {"type": "object", "description": "Column-value pairs to change."}
+        },
+        "required": ["table", "id", "values"]
+      }
+    },
+    {
+      "name": "delete_rows",
+      "description": "Permanently delete rows from a table matching a filter. Irreversible and can affect many rows. A backup taken with backup_database in this session is required first.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {"type": "string"},
+          "filter": {"type": "string"}
+        },
+        "required": ["table", "filter"]
+      }
+    },
+    {
+      "name": "drop_table",
+      "description": "Permanently drop a table and all of its data. Irreversible. A backup taken with backup_database in this session is required first.",
+      "parameters": {
+        "type": "object",
+        "properties": {"table": {"type": "string"}},
+        "required": ["table"]
+      }
+    },
+    {
+      "name": "run_migration",
+      "description": "Apply a schema migration (add, alter, or drop columns/tables) to the database. Changes structure and can be destructive. A backup taken with backup_database in this session is required first.",
+      "parameters": {
+        "type": "object",
+        "properties": {"migration_id": {"type": "string"}},
+        "required": ["migration_id"]
+      }
+    },
+    {
+      "name": "backup_database",
+      "description": "Take a full backup of the database and store it for later restore. Safe. Required before any drop, delete-rows, or migration action.",
+      "parameters": {
+        "type": "object",
+        "properties": {"label": {"type": "string"}},
+        "required": []
+      }
+    },
+    {
+      "name": "restore_backup",
+      "description": "Restore the database from a named backup, overwriting current data. Irreversible with respect to any changes made since the backup. Only call when a specific backup has been identified and restoring is the decided action.",
+      "parameters": {
+        "type": "object",
+        "properties": {"backup_id": {"type": "string"}},
+        "required": ["backup_id"]
+      }
+    },
+    {
+      "name": "export_table",
+      "description": "Export a table's rows to a file for external use. Read-only with respect to the database; does not modify or remove anything.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {"type": "string"},
+          "format": {"type": "string", "description": "Optional export format, e.g. csv or json."}
+        },
+        "required": ["table"]
+      }
+    }
+  ]
+}

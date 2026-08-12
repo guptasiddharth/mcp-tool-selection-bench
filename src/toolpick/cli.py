@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import __version__, report
+from . import __version__, analysis, report
 from .providers import get_provider
 from .runner import run as run_suite
 from .suites.loader import load_suite
@@ -82,6 +82,20 @@ def _cmd_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_analyze(args: argparse.Namespace) -> int:
+    suite = load_suite(args.data)
+    tasks = analysis.task_index(suite.tasks)
+    runs = [_load_run(p) for p in args.runs]
+    md = analysis.markdown(runs, tasks)
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(md)
+        print(f"Wrote {args.out}")
+    else:
+        print(md)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="toolpick", description=__doc__)
     p.add_argument("--version", action="version", version=f"toolpick {__version__}")
@@ -106,6 +120,11 @@ def build_parser() -> argparse.ArgumentParser:
     prep.add_argument("--seed", type=int, default=0, help="Bootstrap seed.")
     prep.add_argument("--out", default=None, help="Output markdown path (else stdout).")
     prep.set_defaults(func=_cmd_report)
+
+    pa = sub.add_parser("analyze", help="Classify each result into the miss taxonomy.")
+    pa.add_argument("runs", nargs="+", help="One or more run JSON files.")
+    pa.add_argument("--out", default=None, help="Output markdown path (else stdout).")
+    pa.set_defaults(func=_cmd_analyze)
     return p
 
 

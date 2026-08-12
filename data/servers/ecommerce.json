@@ -1,0 +1,120 @@
+{
+  "name": "ecommerce",
+  "description": "An online store back office. Refunds require a return eligibility check first; cancellations are only valid before an order ships.",
+  "tools": [
+    {
+      "name": "search_orders",
+      "description": "Search orders by free text, customer, or status. Read-only. Use to find an order when you do not have its exact id.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "Free text, customer name, or order id fragment."},
+          "customer_id": {"type": "string", "description": "Optional customer to scope the search."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_order",
+      "description": "Fetch a single order by its exact order id. Read-only. Includes current status such as pending, shipped, or delivered.",
+      "parameters": {
+        "type": "object",
+        "properties": {"order_id": {"type": "string"}},
+        "required": ["order_id"]
+      }
+    },
+    {
+      "name": "search_products",
+      "description": "Search the product catalog by free text or category. Read-only. Use when no specific product id is known.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "category": {"type": "string", "description": "Optional category to scope the search."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_product",
+      "description": "Fetch a single product's details (description, price, attributes) by its exact product id. Read-only. Does not report stock level.",
+      "parameters": {
+        "type": "object",
+        "properties": {"product_id": {"type": "string"}},
+        "required": ["product_id"]
+      }
+    },
+    {
+      "name": "check_inventory",
+      "description": "Check the current stock level for a product id. Read-only. Use for quantity-on-hand, not for product description or price.",
+      "parameters": {
+        "type": "object",
+        "properties": {"product_id": {"type": "string"}},
+        "required": ["product_id"]
+      }
+    },
+    {
+      "name": "get_customer",
+      "description": "Fetch a customer profile by customer id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"customer_id": {"type": "string"}},
+        "required": ["customer_id"]
+      }
+    },
+    {
+      "name": "check_return_eligibility",
+      "description": "Check whether an order qualifies for a return or refund under policy. This MUST be called and pass before any refund is issued.",
+      "parameters": {
+        "type": "object",
+        "properties": {"order_id": {"type": "string"}},
+        "required": ["order_id"]
+      }
+    },
+    {
+      "name": "issue_refund",
+      "description": "Issue a refund for an order. Only call after check_return_eligibility has confirmed the order is eligible. Moves money.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "amount": {"type": "number", "description": "Optional partial amount; omit for a full refund."}
+        },
+        "required": ["order_id"]
+      }
+    },
+    {
+      "name": "cancel_order",
+      "description": "Cancel an order. Only valid while the order has not yet shipped; check the order's status first. Irreversible once shipped.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "reason": {"type": "string"}
+        },
+        "required": ["order_id"]
+      }
+    },
+    {
+      "name": "apply_discount",
+      "description": "Apply a discount code to an order. Adjusts the order total; verify the code is valid for that order.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "code": {"type": "string"}
+        },
+        "required": ["order_id", "code"]
+      }
+    },
+    {
+      "name": "track_shipment",
+      "description": "Get shipment tracking status and location for an order. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"order_id": {"type": "string"}},
+        "required": ["order_id"]
+      }
+    }
+  ]
+}

@@ -76,6 +76,9 @@ toolpick run --provider litellm --model claude-3-5-haiku-latest
 
 # Build a decision table across runs (first run is the paired baseline)
 toolpick report results/*.json --out report.md
+
+# Break each run into a miss taxonomy (correct, read-first, policy violation, wrong tool, param error)
+toolpick analyze results/*.json
 ```
 
 Python API:
@@ -105,8 +108,11 @@ comparison against a baseline.
 
 ## A real run: the whole Anthropic 5 lineup
 
-108 tasks, all four current Anthropic models, at each model's default temperature
-(`toolpick run --provider litellm --model anthropic/<model> --concurrency 6`):
+This run covers the six original domains (108 tasks), all four current Anthropic
+models, at each model's default temperature (`toolpick run --provider litellm
+--model anthropic/<model> --concurrency 6`). The suite now ships ten domains (156
+tasks); the four newer ones (healthcare, hr, ecommerce, database) are there for
+you to run, and the frozen finding below is the original six.
 
 | Model | Correct | Policy violations | Wrong-tool errors | Reads before acting |
 |---|---|---|---|---|
@@ -114,6 +120,8 @@ comparison against a baseline.
 | Sonnet 5 | 0.84 | 1 | 1 | 15 |
 | Fable 5 | 0.92 | 1 | **6** | 2 |
 | Haiku 4.5 | 0.92 | **5** | 0 | 4 |
+
+![One eval, four axes, and the safest model is not the top scorer](figures/three-winners.png)
 
 There is no best model, and this table is why:
 

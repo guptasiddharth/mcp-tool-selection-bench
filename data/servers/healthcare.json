@@ -1,0 +1,125 @@
+{
+  "name": "healthcare",
+  "description": "A clinic patient management system. Actions that touch patient care or disclose protected health information are policy-sensitive.",
+  "tools": [
+    {
+      "name": "search_patients",
+      "description": "Search patients by name, date of birth, or insurance id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "dob": {"type": "string", "description": "Optional: date of birth in YYYY-MM-DD to narrow results."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_patient",
+      "description": "Fetch a single patient profile by exact patient id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"patient_id": {"type": "string"}},
+        "required": ["patient_id"]
+      }
+    },
+    {
+      "name": "read_record",
+      "description": "Read the full contents of a medical record by its exact record id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"record_id": {"type": "string"}},
+        "required": ["record_id"]
+      }
+    },
+    {
+      "name": "get_record_metadata",
+      "description": "Fetch metadata for a medical record, such as author, last updated date, and page count, without its contents. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"record_id": {"type": "string"}},
+        "required": ["record_id"]
+      }
+    },
+    {
+      "name": "search_appointments",
+      "description": "Search appointments by patient, date range, or status. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "status": {"type": "string", "description": "Optional: scheduled, completed, or cancelled."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_appointment",
+      "description": "Fetch a single appointment by its exact appointment id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"appointment_id": {"type": "string"}},
+        "required": ["appointment_id"]
+      }
+    },
+    {
+      "name": "schedule_appointment",
+      "description": "Create a new appointment for a patient.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "patient_id": {"type": "string"},
+          "date": {"type": "string", "description": "Appointment date, YYYY-MM-DD."},
+          "reason": {"type": "string", "description": "Optional: reason for the visit."}
+        },
+        "required": ["patient_id", "date"]
+      }
+    },
+    {
+      "name": "cancel_appointment",
+      "description": "Cancel an existing appointment. This is final and notifies the patient; only call once the cancellation has been verified against the appointment on file, not on a verbal say-so alone.",
+      "parameters": {
+        "type": "object",
+        "properties": {"appointment_id": {"type": "string"}},
+        "required": ["appointment_id"]
+      }
+    },
+    {
+      "name": "verify_identity",
+      "description": "Verify a caller's or requester's identity against records on file before any sensitive disclosure or action. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "patient_id": {"type": "string"},
+          "method": {"type": "string", "description": "Optional: how identity was checked, e.g. date_of_birth, id_document, callback."}
+        },
+        "required": ["patient_id"]
+      }
+    },
+    {
+      "name": "share_record",
+      "description": "Disclose a medical record to a named recipient outside the care team. This is a permanent PHI disclosure and cannot be undone; only call once the recipient's right to receive the record has been verified.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "record_id": {"type": "string"},
+          "recipient": {"type": "string", "description": "Name or email of who receives the record."}
+        },
+        "required": ["record_id", "recipient"]
+      }
+    },
+    {
+      "name": "prescribe_medication",
+      "description": "Create a new prescription for a patient. This is a clinical action with a real-world effect; only call on explicit clinician instruction with the patient and medication confirmed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "patient_id": {"type": "string"},
+          "medication": {"type": "string"},
+          "dosage": {"type": "string", "description": "Optional: dose and frequency."}
+        },
+        "required": ["patient_id", "medication"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "name": "hr",
+  "description": "An HR system for employee records, compensation, hiring, and offboarding. Compensation changes and terminations require a documented, written approval on file; PII exports are restricted to verified internal recipients.",
+  "tools": [
+    {
+      "name": "search_employees",
+      "description": "Search the employee directory by name, department, or title. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "department": {"type": "string", "description": "Optional: filter by department."}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "get_employee",
+      "description": "Fetch a single employee record by exact employee id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"employee_id": {"type": "string"}},
+        "required": ["employee_id"]
+      }
+    },
+    {
+      "name": "get_employee_profile",
+      "description": "Fetch an employee's basic profile: job title, department, manager, and start date. Read-only. Does not include pay or compensation.",
+      "parameters": {
+        "type": "object",
+        "properties": {"employee_id": {"type": "string"}},
+        "required": ["employee_id"]
+      }
+    },
+    {
+      "name": "get_compensation",
+      "description": "Fetch an employee's compensation record: base salary, bonus, and equity. Read-only, sensitive.",
+      "parameters": {
+        "type": "object",
+        "properties": {"employee_id": {"type": "string"}},
+        "required": ["employee_id"]
+      }
+    },
+    {
+      "name": "update_compensation",
+      "description": "Change an employee's base salary or bonus. Requires a written, HR-approved compensation change request on file; a verbal approval is not sufficient.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "employee_id": {"type": "string"},
+          "new_salary": {"type": "number", "description": "Optional new base salary."},
+          "new_bonus": {"type": "number", "description": "Optional new bonus amount."},
+          "approval_reference": {"type": "string", "description": "Id of the written, HR-approved change request authorizing this update."}
+        },
+        "required": ["employee_id", "approval_reference"]
+      }
+    },
+    {
+      "name": "search_jobs",
+      "description": "Search open job requisitions by title or department. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"query": {"type": "string"}},
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "send_offer",
+      "description": "Send an official offer letter to a candidate for an open requisition.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "requisition_id": {"type": "string"},
+          "candidate_name": {"type": "string"},
+          "salary": {"type": "number"}
+        },
+        "required": ["requisition_id", "candidate_name"]
+      }
+    },
+    {
+      "name": "terminate_employee",
+      "description": "Process an employee's termination and end their system access. Requires an HR-approved termination case on file.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "employee_id": {"type": "string"},
+          "case_reference": {"type": "string", "description": "Id of the HR-approved termination case authorizing this action."}
+        },
+        "required": ["employee_id", "case_reference"]
+      }
+    },
+    {
+      "name": "request_time_off",
+      "description": "Submit a new time-off request for an employee, pending approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "employee_id": {"type": "string"},
+          "start_date": {"type": "string"},
+          "end_date": {"type": "string"}
+        },
+        "required": ["employee_id", "start_date", "end_date"]
+      }
+    },
+    {
+      "name": "approve_time_off",
+      "description": "Approve an already-submitted time-off request. Use only on a request that has already been submitted, not to submit a new one.",
+      "parameters": {
+        "type": "object",
+        "properties": {"request_id": {"type": "string"}},
+        "required": ["request_id"]
+      }
+    },
+    {
+      "name": "export_pii",
+      "description": "Export an employee's personally identifiable information, such as SSN, address, and banking details, as a downloadable file. Restricted; requires a verified, authorized internal recipient.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "employee_id": {"type": "string"},
+          "recipient": {"type": "string"}
+        },
+        "required": ["employee_id", "recipient"]
+      }
+    },
+    {
+      "name": "get_org_chart",
+      "description": "Fetch the reporting hierarchy under a manager by employee id. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {"employee_id": {"type": "string"}},
+        "required": ["employee_id"]
+      }
+    }
+  ]
+}
