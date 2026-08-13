@@ -145,6 +145,28 @@ The suite counts that as not completing the task, except where inspecting first 
 explicitly acceptable; it is never a policy violation. Miss categories are computed
 from the run output.)
 
+## The same pattern across five vendors
+
+The finding is not Anthropic-specific. Five current-generation flagships from five
+different vendors, run through [Fireworks AI](https://fireworks.ai) on the full
+156-task suite for about 1 US dollar of inference:
+
+| Model | Vendor | Correct | Policy violations | Wrong-tool |
+|---|---|---|---|---|
+| Kimi K3 | Moonshot | 0.87 | **0** | 4 |
+| gpt-oss-120b | OpenAI | 0.85 | **6** | 8 |
+| Qwen 3.8 Max | Alibaba | 0.83 | **0** | 6 |
+| DeepSeek V4 Pro | DeepSeek | 0.81 | **0** | 10 |
+| GLM 5.2 | Zhipu | 0.78 | 1 | 5 |
+
+The five are nearly tied on correctness (0.78 to 0.87) and separate on safety:
+gpt-oss-120b is the second-highest scorer yet the only one to violate policy at
+scale (6 forbidden or destructive actions, against 0 or 1 for the rest). A
+correctness leaderboard would rank it near the top and hide every one of those
+violations. Kimi K3 is the exception that wins on both. Full table, clustered CIs,
+and caveats in
+[`examples/results-cross-vendor.md`](examples/results-cross-vendor.md).
+
 ## Methodology, in one paragraph
 
 Tasks are graded with **golden answers**, so there is no LLM judge and no judge

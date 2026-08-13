@@ -41,6 +41,13 @@ DOMAIN_CORRECT = {
     "Opus 5": [0.58, 0.83, 0.83, 0.67, 0.79, 0.75],
 }
 
+# Cross-vendor run: five current-generation flagships from five vendors, served
+# via Fireworks AI on the full 156-task suite. Reported numbers, do not recompute.
+CV_MODELS = ["Kimi K3", "gpt-oss-120b", "Qwen 3.8 Max", "DeepSeek V4 Pro", "GLM 5.2"]
+CV_VENDORS = ["Moonshot", "OpenAI", "Alibaba", "DeepSeek", "Zhipu"]
+CV_CORRECT = [0.87, 0.85, 0.83, 0.81, 0.78]
+CV_POLICY_VIOLATIONS = [0, 6, 0, 0, 1]
+
 OUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "figures")
 
 # ---------------------------------------------------------------------------
@@ -143,7 +150,7 @@ def make_three_winners():
     fig.text(
         0.5,
         0.01,
-        "Groow Labs · ToolPick core suite · 6 domains, 108 tasks · default temperature · groowlabs.ai",
+        "Groow Labs · ToolPick core suite · 6 domains, 108 tasks · default temperature · groowlabs.com",
         ha="center",
         va="bottom",
         fontsize=9.5,
@@ -210,7 +217,7 @@ def make_domain_heatmap():
     fig.text(
         0.5,
         0.02,
-        "Groow Labs · ToolPick core suite · groowlabs.ai",
+        "Groow Labs · ToolPick core suite · groowlabs.com",
         ha="center",
         va="bottom",
         fontsize=9.5,
@@ -225,11 +232,64 @@ def make_domain_heatmap():
     return out_path
 
 
+def make_cross_vendor():
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 6.8), dpi=200)
+    labels = [f"{m}\n({v})" for m, v in zip(CV_MODELS, CV_VENDORS)]
+    x = np.arange(len(CV_MODELS))
+    panels = [
+        ("Correct\n(higher is better)", CV_CORRECT, "{:.0%}", 1.0, True),
+        ("Policy violations\n(lower is better)", CV_POLICY_VIOLATIONS, "{:.0f}", 6, False),
+    ]
+    for ax, (title, values, fmt, vmax, higher_better) in zip(axes, panels):
+        bars = ax.bar(x, values, width=0.62, color=LIGHT_GRAY, edgecolor=BLACK, linewidth=1.1, zorder=3)
+        vals_arr = np.array(values, dtype=float)
+        target = vals_arr.max() if higher_better else vals_arr.min()
+        best_mask = np.isclose(vals_arr, target)
+        for i in np.where(best_mask)[0]:
+            bars[i].set_color(BLACK)
+            bars[i].set_edgecolor(BLACK)
+        for i, v in enumerate(values):
+            ax.text(
+                i, v + vmax * 0.035, fmt.format(v),
+                ha="center", va="bottom", fontsize=12, color=BLACK,
+                fontweight="bold" if best_mask[i] else "normal",
+            )
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, fontsize=9.5)
+        ax.set_ylim(0, vmax * 1.22)
+        ax.set_title(title, fontsize=13.5, pad=14, color=BLACK)
+        ax.yaxis.grid(True, color=GRID, linewidth=0.8, zorder=0)
+        ax.set_axisbelow(True)
+        ax.set_yticks([])
+        _strip_axes(ax)
+
+    fig.suptitle("Five vendors. Score is not safety.", fontsize=23, fontweight="bold", y=0.985, color=BLACK)
+    fig.text(
+        0.5, 0.9,
+        "Current flagships from five vendors, nearly tied on correctness (0.78 to 0.87).\n"
+        "gpt-oss-120b is the second-highest scorer yet the only model to violate policy at scale.",
+        ha="center", va="top", fontsize=11.5, color=DARK_GRAY,
+    )
+    fig.text(
+        0.5, 0.01,
+        "Groow Labs · ToolPick · 156 tasks · served via Fireworks AI · groowlabs.com",
+        ha="center", va="bottom", fontsize=9.5, color=MID_GRAY,
+    )
+    fig.tight_layout(rect=(0, 0.06, 1, 0.82))
+    os.makedirs(OUT_DIR, exist_ok=True)
+    out_path = os.path.join(OUT_DIR, "cross-vendor.png")
+    fig.savefig(out_path, dpi=200)
+    plt.close(fig)
+    return out_path
+
+
 def main():
     p1 = make_three_winners()
     p2 = make_domain_heatmap()
+    p3 = make_cross_vendor()
     print(f"Wrote {p1}")
     print(f"Wrote {p2}")
+    print(f"Wrote {p3}")
 
 
 if __name__ == "__main__":
