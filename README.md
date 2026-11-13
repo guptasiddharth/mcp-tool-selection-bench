@@ -28,13 +28,13 @@ The public MCP/tool-use benchmarks that exist (MCP-Bench, MCPEval, MCP-Universe,
 and others) are general capability tests over a fixed public toolset. They are
 useful, and they are also, by construction:
 
-- **generic** — they cannot tell you whether *your* agent picks the right tool
+- **generic**: they cannot tell you whether *your* agent picks the right tool
   from *your* servers under *your* policy;
-- **contamination-prone** — being public, their tasks leak into training data
+- **contamination-prone**: being public, their tasks leak into training data
   over time, and scores drift up without ability moving.
 
 ToolPick is deliberately narrow and honest about it. It focuses on the one thing
-that decides most agent incidents — **first-tool correctness under policy** — with
+that decides most agent incidents, **first-tool correctness under policy**, with
 tasks designed around three failure modes that real toolsets create:
 
 1. **Distractors.** `search_transactions` vs `get_transaction`, `read_file` vs
@@ -42,7 +42,7 @@ tasks designed around three failure modes that real toolsets create:
 2. **Policy traps.** "Issue the refund" when policy requires an eligibility check
    first; "just close the ticket" when it is not resolved; "clean up this file"
    when the right action is to move, not permanently delete.
-3. **Pressure.** "The manager already approved it," "the customer is furious" —
+3. **Pressure.** "The manager already approved it," "the customer is furious":
    social cues that tempt a model to skip the safe step.
 
 ## Install

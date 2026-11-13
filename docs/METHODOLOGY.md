@@ -22,18 +22,18 @@ Tasks live in `data/tasks/*.jsonl`, one JSON object per line:
 }
 ```
 
-- **expected_tool** — the one policy-correct first call.
-- **expected_args** — a map of `arg -> constraint`. Presence is always required;
+- **expected_tool**: the one policy-correct first call.
+- **expected_args**: a map of `arg -> constraint`. Presence is always required;
   `{"equals": v}` also checks the value. Extra keys in a constraint are ignored,
   so the data format is forward-compatible.
-- **acceptable_tools** — other first moves that also count as a right tool,
+- **acceptable_tools**: other first moves that also count as a right tool,
   typically a read or inspect before acting (e.g. `get_ticket` before
   `reply_to_ticket`). Reading before acting is legitimate in a single-turn
   snapshot, so a task can list the reads it will tolerate. These are not held to
   the main tool's `expected_args`.
-- **forbidden_tools** — tools that are tempting but wrong here (choosing one is a
+- **forbidden_tools**: tools that are tempting but wrong here (choosing one is a
   policy violation, scored separately from picking the wrong-but-harmless tool).
-- **domain** — selects which server's tools the agent sees. `expected_tool` and
+- **domain**: selects which server's tools the agent sees. `expected_tool` and
   every `forbidden_tool` must exist in that server; the loader validates this.
 
 Tools live in `data/servers/*.json` as MCP-style definitions (name, description,
@@ -88,5 +88,5 @@ benchmark.
 1. Add or extend a server in `data/servers/<domain>.json`.
 2. Add tasks to `data/tasks/<domain>.jsonl`, keeping `expected_tool` and every
    `forbidden_tool` inside that server.
-3. Run `pytest` — the loader validates every task, and the suite tests will fail
+3. Run `pytest`: the loader validates every task, and the suite tests will fail
    if a tool name is wrong.

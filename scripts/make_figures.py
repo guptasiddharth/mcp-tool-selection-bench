@@ -23,7 +23,7 @@ matplotlib.use("Agg")
 
 # ---------------------------------------------------------------------------
 # Frozen data (core suite: 6 domains, 108 tasks, 4 Anthropic Claude 5 models,
-# default temperature). Do not recompute — these are the reported numbers.
+# default temperature). Do not recompute; these are the reported numbers.
 # ---------------------------------------------------------------------------
 
 MODELS = ["Opus 5", "Sonnet 5", "Fable 5", "Haiku 4.5"]
